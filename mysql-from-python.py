@@ -1,5 +1,4 @@
 import os
-import datetime
 import pymysql
 
 # get username from gitpod workspace
@@ -17,10 +16,11 @@ connection = pymysql.connect(host='localhost',
 try:
     #Run a query
     with connection.cursor() as cursor:
-        cursor.execute("""CREATE TABLE IF NOT EXISTS
-                        Friends(name char(20), age int, DOB datetime);""")
-        # the above will display as a warning(not an error) if the
-        # table already exists
+        list_of_names = ['Fred']
+        # Prepare a string with the same number od placeholder as in list_of_names
+        format_strings = ','.join(['%s']*len(list_of_names))
+        cursor.execute("DELETE FROM Friends WHERE name in ({});".format(format_strings), list_of_names)
+        connection.commit()
 finally:
     # Close the connection, regardless of whatever the above was successful
     connection.close()
